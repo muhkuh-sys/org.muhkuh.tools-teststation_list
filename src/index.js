@@ -16,6 +16,7 @@ import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import TreeItem from '@material-ui/lab/TreeItem';
 import TreeView from '@material-ui/lab/TreeView';
 import Typography from '@material-ui/core/Typography';
+import { ulid } from 'ulid';
 
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -67,9 +68,15 @@ class TeststationList extends React.Component {
       // Nothing left, stop the interval.
       clearInterval(this.interval_demo);
     } else {
+      // Create a new item.
+      let tNewItem = {
+        ulid: ulid(),
+        state: 0,
+        data: tEntry
+      }
       // Append the new item to the state.
       let atNewStations = this.state.atStations;
-      atNewStations.push(tEntry)
+      atNewStations.push(tNewItem)
       this.setState({
         atStations: atNewStations
       })
@@ -104,21 +111,21 @@ class TeststationList extends React.Component {
             </div>
             <div id='StationList'>
                 {this.state.atStations.map((tStation,uiIndex) => (
-                  <Card key={uiIndex} id="StationItem">
+                  <Card key={tStation.ulid} id="StationItem">
                     <CardHeader
                       avatar={<Avatar aria-label="teststation" src={ImgCow} />}
-                      title={tStation.ssdp.name}
-                      subheader={tStation.timestamp}
+                      title={tStation.data.ssdp.name}
+                      subheader={tStation.data.timestamp}
                     />
                     <CardContent>
                       <Typography display="block" variant="subtitle2" color="textSecondary">
-                      {tStation.test.title}
+                      {tStation.data.test.title}
                       </Typography>
                       <Typography display="block" variant="subtitle2" color="textSecondary">
-                      {tStation.test.subtitle}
+                      {tStation.data.test.subtitle}
                       </Typography>
                       <Typography display="block" variant="subtitle2" color="textSecondary">
-                      {`IP ${tStation.ip}`}
+                      {`IP ${tStation.data.ip}`}
                       </Typography>
                     </CardContent>
                     <CardActions>
