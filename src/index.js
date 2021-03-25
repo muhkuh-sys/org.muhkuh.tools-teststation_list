@@ -58,8 +58,6 @@ class TeststationList extends React.Component {
       1: (<Avatar aria-label="teststation"><AccessTimeIcon /></Avatar>),
       2: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
     }
-
-    this.cnt = 0;
   }
 
   // This is just a demo to add events.
@@ -81,13 +79,9 @@ class TeststationList extends React.Component {
       // Create a new item.
       let tNewItem = {
         ulid: ulid(),
-        state: this.cnt,
+        state: 0,
         date: this.strToDate(tEntry.timestamp),
         data: tEntry
-      }
-      this.cnt += 1;
-      if( this.cnt>2) {
-        this.cnt = 0;
       }
       this.updateList(tNewItem)
     }
@@ -109,6 +103,7 @@ class TeststationList extends React.Component {
     let fChanged = false
     let atNewStations = this.state.atStations;
 
+    // Is there a new item to insert?
     if( tNewItem!==null ) {
       // Sort the new item into the list by its date.
       const sizNewStations = atNewStations.length
@@ -127,6 +122,21 @@ class TeststationList extends React.Component {
       }
       fChanged = true
     }
+
+    // Loop over all items and strike out re-used IPs.
+    let atIPs = [];
+    atNewStations.forEach(function(tStation, uiIndex) {
+      const strIP = tStation.data.ip;
+      // Is the IP part of the list? This means one of the already processed
+      // entries had the same.
+      if( atIPs.includes(strIP) == true ) {
+        // Set the state to "blocked".
+        tStation.state = 2;
+      } else {
+        // Add the IP to the list.
+        atIPs.push(strIP);
+      }
+    }, this);
 
     if( fChanged == true ) {
       // Append the new item to the state.
