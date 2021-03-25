@@ -18,8 +18,10 @@ import TreeView from '@material-ui/lab/TreeView';
 import Typography from '@material-ui/core/Typography';
 import { ulid } from 'ulid';
 
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
 import ImgCow from './images/muhkuh.svg';
@@ -50,6 +52,14 @@ class TeststationList extends React.Component {
     this.state = {
       atStations: []
     };
+
+    this.atAvatars = {
+      0: (<Avatar aria-label="teststation" src={ImgCow} />),
+      1: (<Avatar aria-label="teststation"><AccessTimeIcon /></Avatar>),
+      2: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
+    }
+
+    this.cnt = 0;
   }
 
   // This is just a demo to add events.
@@ -71,9 +81,13 @@ class TeststationList extends React.Component {
       // Create a new item.
       let tNewItem = {
         ulid: ulid(),
-        state: 0,
+        state: this.cnt,
         date: this.strToDate(tEntry.timestamp),
         data: tEntry
+      }
+      this.cnt += 1;
+      if( this.cnt>2) {
+        this.cnt = 0;
       }
       this.updateList(tNewItem)
     }
@@ -95,23 +109,25 @@ class TeststationList extends React.Component {
     let fChanged = false
     let atNewStations = this.state.atStations;
 
-    // Sort the new item into the list by its date.
-    const sizNewStations = atNewStations.length
-    if( sizNewStations==0 ) {
-      atNewStations.push(tNewItem)
-    } else {
-      const tNewItemDate = tNewItem.date;
-      let uiPos = 0;
-      while( uiPos<atNewStations.length ) {
-        if( tNewItemDate>atNewStations[uiPos].date ) {
-          break;
+    if( tNewItem!==null ) {
+      // Sort the new item into the list by its date.
+      const sizNewStations = atNewStations.length
+      if( sizNewStations==0 ) {
+        atNewStations.push(tNewItem)
+      } else {
+        const tNewItemDate = tNewItem.date;
+        let uiPos = 0;
+        while( uiPos<atNewStations.length ) {
+          if( tNewItemDate>atNewStations[uiPos].date ) {
+            break;
+          }
+          uiPos += 1;
         }
-        uiPos += 1;
+        atNewStations.splice(uiPos, 0, tNewItem);
       }
-      atNewStations.splice(uiPos, 0, tNewItem);
+      fChanged = true
     }
 
-    fChanged = true
     if( fChanged == true ) {
       // Append the new item to the state.
       this.setState({
@@ -121,6 +137,44 @@ class TeststationList extends React.Component {
   }
 
   render() {
+    const atAvatars = this.atAvatars;
+
+    let atList = [];
+    this.state.atStations.forEach(function(tStation, uiIndex) {
+      const uiState = tStation.state;
+
+      let tAction = null;
+      if( uiState==0 ) {
+        tAction = (
+          <CardActions>
+            <Button variant="contained" endIcon={<PlayArrowIcon />} >Go </Button>
+          </CardActions>
+        );
+      }
+
+      atList.push(
+        <Card key={tStation.ulid} id="StationItem">
+          <CardHeader
+            avatar={atAvatars[uiState]}
+            title={tStation.data.ssdp.name}
+            subheader={tStation.data.timestamp}
+          />
+          <CardContent>
+            <Typography display="block" variant="subtitle2" color="textSecondary">
+            {tStation.data.test.title}
+            </Typography>
+            <Typography display="block" variant="subtitle2" color="textSecondary">
+            {tStation.data.test.subtitle}
+            </Typography>
+            <Typography display="block" variant="subtitle2" color="textSecondary">
+            {`IP ${tStation.data.ip}`}
+            </Typography>
+          </CardContent>
+          {tAction}
+        </Card>
+      );
+    }, this);
+
     return (
       <MuiThemeProvider theme={TesterUITheme}>
         <CssBaseline>
@@ -147,29 +201,7 @@ class TeststationList extends React.Component {
       </TreeView>
             </div>
             <div id='StationList'>
-                {this.state.atStations.map((tStation,uiIndex) => (
-                  <Card key={tStation.ulid} id="StationItem">
-                    <CardHeader
-                      avatar={<Avatar aria-label="teststation" src={ImgCow} />}
-                      title={tStation.data.ssdp.name}
-                      subheader={tStation.data.timestamp}
-                    />
-                    <CardContent>
-                      <Typography display="block" variant="subtitle2" color="textSecondary">
-                      {tStation.data.test.title}
-                      </Typography>
-                      <Typography display="block" variant="subtitle2" color="textSecondary">
-                      {tStation.data.test.subtitle}
-                      </Typography>
-                      <Typography display="block" variant="subtitle2" color="textSecondary">
-                      {`IP ${tStation.data.ip}`}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button variant="contained" endIcon={<PlayArrowIcon />} >Go </Button>
-                    </CardActions>
-                  </Card>
-                ))}
+                {atList}
             </div>
           </div>
         </CssBaseline>
