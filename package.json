@@ -1,0 +1,33 @@
+{
+  "name": "teststation_list",
+  "version": "0.0.1",
+  "description": "A list of all available teststations.",
+  "main": "index.js",
+  "scripts": {
+    "debug": "webpack --mode development",
+    "release": "webpack --mode production"
+  },
+  "author": "Christoph Thelen <cthelen@hilscher.com>",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-env": "^7.13.12",
+    "@babel/preset-react": "^7.12.13",
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.5.0"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "typeface-roboto": "^1.1.13",
+    "typeface-roboto-mono": "^1.1.13"
+  }
+}

@@ -1,0 +1,7 @@
+#StationList {
+  display: table-cell;
+}
+
+#StationItem {
+  margin: 0.5em;
+}
