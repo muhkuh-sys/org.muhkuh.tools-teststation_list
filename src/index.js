@@ -14,8 +14,12 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CssBaseline from '@material-ui/core/CssBaseline';
 //import IconButton from '@material-ui/core/IconButton';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import TreeItem from '@material-ui/lab/TreeItem';
+import TreeView from '@material-ui/lab/TreeView';
 import Typography from '@material-ui/core/Typography';
 
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
 import TesterUITheme from './testerui_theme';
@@ -49,30 +53,53 @@ class TeststationList extends React.Component {
     return (
       <MuiThemeProvider theme={TesterUITheme}>
         <CssBaseline>
-          <div id='StationList'>
-              {this.state.atStations.map((tStation,uiIndex) => (
-                <Card key={uiIndex} id="StationItem">
-                  <CardHeader
-                    avatar={<Avatar aria-label="teststation"></Avatar>}
-                    title={tStation.ssdp.name}
-                    subheader={tStation.timestamp}
-                  />
-                  <CardContent>
-                    <Typography display="block" variant="subtitle2" color="textSecondary">
-                     {tStation.test.title}
-                    </Typography>
-                    <Typography display="block" variant="subtitle2" color="textSecondary">
-                     {tStation.test.subtitle}
-                    </Typography>
-                    <Typography display="block" variant="subtitle2" color="textSecondary">
-                     {`IP ${tStation.ip}`}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button variant="contained" endIcon={<PlayArrowIcon />} >Go </Button>
-                  </CardActions>
-                </Card>
-              ))}
+          <div id="Root">
+            <div id="StationTable">
+            <TreeView
+        defaultCollapseIcon={<ExpandMoreIcon />}
+        defaultExpandIcon={<ChevronRightIcon />}
+      >
+        <TreeItem nodeId="1" label="Applications">
+          <TreeItem nodeId="2" label="Calendar" />
+          <TreeItem nodeId="3" label="Chrome" />
+          <TreeItem nodeId="4" label="Webstorm" />
+        </TreeItem>
+        <TreeItem nodeId="5" label="Documents">
+          <TreeItem nodeId="10" label="OSS" />
+          <TreeItem nodeId="6" label="Material-UI">
+            <TreeItem nodeId="7" label="src">
+              <TreeItem nodeId="8" label="index.js" />
+              <TreeItem nodeId="9" label="tree-view.js" />
+            </TreeItem>
+          </TreeItem>
+        </TreeItem>
+      </TreeView>
+            </div>
+            <div id='StationList'>
+                {this.state.atStations.map((tStation,uiIndex) => (
+                  <Card key={uiIndex} id="StationItem">
+                    <CardHeader
+                      avatar={<Avatar aria-label="teststation"></Avatar>}
+                      title={tStation.ssdp.name}
+                      subheader={tStation.timestamp}
+                    />
+                    <CardContent>
+                      <Typography display="block" variant="subtitle2" color="textSecondary">
+                      {tStation.test.title}
+                      </Typography>
+                      <Typography display="block" variant="subtitle2" color="textSecondary">
+                      {tStation.test.subtitle}
+                      </Typography>
+                      <Typography display="block" variant="subtitle2" color="textSecondary">
+                      {`IP ${tStation.ip}`}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button variant="contained" endIcon={<PlayArrowIcon />} >Go </Button>
+                    </CardActions>
+                  </Card>
+                ))}
+            </div>
           </div>
         </CssBaseline>
       </MuiThemeProvider>

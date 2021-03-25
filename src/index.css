@@ -1,5 +1,17 @@
+#Root {
+  display: flex;
+  max-height: 100vh;
+  min-height: 100vh;
+}
+
+#StationTable {
+  min-width: 25%;
+  overflow-y: scroll;
+}
+
 #StationList {
   display: table-cell;
+  overflow-y: scroll;
 }
 
 #StationItem {
