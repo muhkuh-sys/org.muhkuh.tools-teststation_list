@@ -22,6 +22,8 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
+import ImgCow from './images/muhkuh.svg';
+
 import TesterUITheme from './testerui_theme';
 
 
@@ -79,7 +81,7 @@ class TeststationList extends React.Component {
                 {this.state.atStations.map((tStation,uiIndex) => (
                   <Card key={uiIndex} id="StationItem">
                     <CardHeader
-                      avatar={<Avatar aria-label="teststation"></Avatar>}
+                      avatar={<Avatar aria-label="teststation" src={ImgCow} />}
                       title={tStation.ssdp.name}
                       subheader={tStation.timestamp}
                     />
