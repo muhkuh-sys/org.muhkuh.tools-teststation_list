@@ -58,6 +58,10 @@ class TeststationList extends React.Component {
       1: (<Avatar aria-label="teststation"><AccessTimeIcon /></Avatar>),
       2: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
     }
+
+    // Mark entries as "timed out" after this amount of milliseconds.
+    // The value 1000 * 60 * 60 * 24 * 7 would be 1 week.
+    this.tTimeout = 1000 * 60 * 60 * 24 * 7;
   }
 
   // This is just a demo to add events.
@@ -124,17 +128,40 @@ class TeststationList extends React.Component {
     }
 
     // Loop over all items and strike out re-used IPs.
+    // Also mark timeouts.
     let atIPs = [];
+    let tNow = new Date();
+    const tTimeout = this.tTimeout;
     atNewStations.forEach(function(tStation, uiIndex) {
+      const uiOldState = tStation.state;
       const strIP = tStation.data.ip;
       // Is the IP part of the list? This means one of the already processed
       // entries had the same.
       if( atIPs.includes(strIP) == true ) {
-        // Set the state to "blocked".
-        tStation.state = 2;
+        if( uiOldState != 2 ) {
+          // Set the state to "blocked".
+          tStation.state = 2;
+          fChanged = true;
+        }
       } else {
         // Add the IP to the list.
         atIPs.push(strIP);
+
+          // Get the age of the entry.
+        const tAgeMs = tNow.getTime() - tStation.date.getTime();
+        if( tAgeMs>tTimeout ) {
+          if( uiOldState != 1 ) {
+            // Set the state to "timeout".
+            tStation.state = 1;
+            fChanged = true;
+          }
+        } else {
+          if( uiOldState != 0 ) {
+            // Set the state to "ok".
+            tStation.state = 0;
+            fChanged = true;
+          }
+        }
       }
     }, this);
 
