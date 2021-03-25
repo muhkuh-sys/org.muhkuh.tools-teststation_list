@@ -72,11 +72,48 @@ class TeststationList extends React.Component {
       let tNewItem = {
         ulid: ulid(),
         state: 0,
+        date: this.strToDate(tEntry.timestamp),
         data: tEntry
       }
-      // Append the new item to the state.
-      let atNewStations = this.state.atStations;
+      this.updateList(tNewItem)
+    }
+  }
+
+  strToDate(strDate) {
+    const tMatch = strDate.match(/(\d+)-(\d+)-(\d+)\s+(\d+):(\d+):(\d+)/)
+    let tDate = null;
+    if( tMatch.length == 7 ) {
+      tDate = new Date(tMatch[1], tMatch[2]-1, tMatch[3], tMatch[4], tMatch[5], tMatch[6])
+    } else {
+      tDate = new Date(strDate)
+    }
+    return tDate
+  }
+
+  updateList(tNewItem) {
+    // Update the state only if the list changed.
+    let fChanged = false
+    let atNewStations = this.state.atStations;
+
+    // Sort the new item into the list by its date.
+    const sizNewStations = atNewStations.length
+    if( sizNewStations==0 ) {
       atNewStations.push(tNewItem)
+    } else {
+      const tNewItemDate = tNewItem.date;
+      let uiPos = 0;
+      while( uiPos<atNewStations.length ) {
+        if( tNewItemDate>atNewStations[uiPos].date ) {
+          break;
+        }
+        uiPos += 1;
+      }
+      atNewStations.splice(uiPos, 0, tNewItem);
+    }
+
+    fChanged = true
+    if( fChanged == true ) {
+      // Append the new item to the state.
       this.setState({
         atStations: atNewStations
       })
