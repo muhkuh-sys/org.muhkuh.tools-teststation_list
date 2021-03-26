@@ -276,9 +276,9 @@ class TeststationList extends React.Component {
                 defaultExpandIcon={<ChevronRightIcon />}
               >
                 {this.state.atStationTable.map((tItem, uiIndex) => (
-                  <TreeItem nodeId={tItem.ulid} label={tItem.label}>
+                  <TreeItem key={tItem.ulid} nodeId={tItem.ulid} label={tItem.label}>
                     {tItem.items.map((tItemSub, uiIndexSub) => (
-                      <TreeItem nodeId={tItemSub.ulid} label={tItemSub.label} onLabelClick={() => this.onStationSelect(tItemSub.ulid)}/>
+                      <TreeItem key={tItemSub.ulid} nodeId={tItemSub.ulid} label={tItemSub.label} onLabelClick={() => this.onStationSelect(tItemSub.ulid)}/>
                     ))}
                   </TreeItem>
                 ))}
