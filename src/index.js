@@ -180,7 +180,7 @@ class TeststationList extends React.Component {
             if( strLabel==atNewStationTable[uiPos].label ) {
               tItem = atNewStationTable[uiPos];
               break;
-            } else if( strLabel>atNewStationTable[uiPos].label ) {
+            } else if( strLabel<atNewStationTable[uiPos].label ) {
               break;
             }
             uiPos += 1;
