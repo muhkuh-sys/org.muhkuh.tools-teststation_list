@@ -222,6 +222,11 @@ class TeststationList extends React.Component {
     }
   }
 
+  onStationSelect(strUlid) {
+    console.log('Station select');
+    console.log(strUlid);
+  }
+
   render() {
     const atAvatars = this.atAvatars;
 
@@ -233,7 +238,7 @@ class TeststationList extends React.Component {
       if( uiState==0 ) {
         tAction = (
           <CardActions>
-            <Button variant="contained" endIcon={<PlayArrowIcon />} >Go </Button>
+            <Button variant="contained" endIcon={<PlayArrowIcon />} onClick={() => this.onStationSelect(tStation.ulid)}>Go </Button>
           </CardActions>
         );
       }
@@ -273,7 +278,7 @@ class TeststationList extends React.Component {
                 {this.state.atStationTable.map((tItem, uiIndex) => (
                   <TreeItem nodeId={tItem.ulid} label={tItem.label}>
                     {tItem.items.map((tItemSub, uiIndexSub) => (
-                      <TreeItem nodeId={tItemSub.ulid} label={tItemSub.label} />
+                      <TreeItem nodeId={tItemSub.ulid} label={tItemSub.label} onLabelClick={() => this.onStationSelect(tItemSub.ulid)}/>
                     ))}
                   </TreeItem>
                 ))}
