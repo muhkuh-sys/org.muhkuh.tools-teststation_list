@@ -50,7 +50,8 @@ class TeststationList extends React.Component {
     ]
 
     this.state = {
-      atStations: []
+      atStationList: [],
+      atStationTable: []
     };
 
     this.atAvatars = {
@@ -105,24 +106,24 @@ class TeststationList extends React.Component {
   updateList(tNewItem) {
     // Update the state only if the list changed.
     let fChanged = false
-    let atNewStations = this.state.atStations;
+    let atNewStationList = this.state.atStationList;
 
     // Is there a new item to insert?
     if( tNewItem!==null ) {
       // Sort the new item into the list by its date.
-      const sizNewStations = atNewStations.length
-      if( sizNewStations==0 ) {
-        atNewStations.push(tNewItem)
+      const sizNewStationList = atNewStationList.length
+      if( sizNewStationList==0 ) {
+        atNewStationList.push(tNewItem)
       } else {
         const tNewItemDate = tNewItem.date;
         let uiPos = 0;
-        while( uiPos<atNewStations.length ) {
-          if( tNewItemDate>atNewStations[uiPos].date ) {
+        while( uiPos<atNewStationList.length ) {
+          if( tNewItemDate>atNewStationList[uiPos].date ) {
             break;
           }
           uiPos += 1;
         }
-        atNewStations.splice(uiPos, 0, tNewItem);
+        atNewStationList.splice(uiPos, 0, tNewItem);
       }
       fChanged = true
     }
@@ -132,7 +133,7 @@ class TeststationList extends React.Component {
     let atIPs = [];
     let tNow = new Date();
     const tTimeout = this.tTimeout;
-    atNewStations.forEach(function(tStation, uiIndex) {
+    atNewStationList.forEach(function(tStation, uiIndex) {
       const uiOldState = tStation.state;
       const strIP = tStation.data.ip;
       // Is the IP part of the list? This means one of the already processed
@@ -166,9 +167,57 @@ class TeststationList extends React.Component {
     }, this);
 
     if( fChanged == true ) {
+      // Convert the station list to a table.
+      let atNewStationTable = []
+      atNewStationList.forEach(function(tStation, uiIndex) {
+        if( tStation.state==0 ) {
+          // Sort the new item into the table by its name.
+          const sizNewStationTable = atNewStationTable.length;
+          const strLabel = tStation.data.test.title;
+          let uiPos = 0;
+          let tItem = null;
+          while( uiPos<sizNewStationTable ) {
+            if( strLabel==atNewStationTable[uiPos].label ) {
+              tItem = atNewStationTable[uiPos];
+              break;
+            } else if( strLabel>atNewStationTable[uiPos].label ) {
+              break;
+            }
+            uiPos += 1;
+          }
+          // Found an item?
+          if( tItem === null ) {
+            // No item found, create a new one at the insert position.
+            tItem = {
+              label: strLabel,
+              ulid: ulid(),
+              items: []
+            }
+            atNewStationTable.splice(uiPos, 0, tItem);
+          }
+          // Create a new subitem.
+          const strLabelSub = `${tStation.data.ssdp.name} • ${tStation.data.test.subtitle}`;
+          uiPos = 0;
+          let atItemsSub = tItem.items;
+          const sizItemsSub = atItemsSub.length;
+          while( uiPos<sizItemsSub ) {
+            if( strLabelSub<atItemsSub[uiPos].label ) {
+              break;
+            }
+            uiPos += 1;
+          }
+          const tItemSub = {
+            label: strLabelSub,
+            ulid: tStation.ulid
+          }
+          atItemsSub.splice(uiPos, 0, tItemSub);
+        }
+      }, this);
+
       // Append the new item to the state.
       this.setState({
-        atStations: atNewStations
+        atStationList: atNewStationList,
+        atStationTable: atNewStationTable
       })
     }
   }
@@ -177,7 +226,7 @@ class TeststationList extends React.Component {
     const atAvatars = this.atAvatars;
 
     let atList = [];
-    this.state.atStations.forEach(function(tStation, uiIndex) {
+    this.state.atStationList.forEach(function(tStation, uiIndex) {
       const uiState = tStation.state;
 
       let tAction = null;
@@ -217,25 +266,18 @@ class TeststationList extends React.Component {
         <CssBaseline>
           <div id="Root">
             <div id="StationTable">
-            <TreeView
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
-      >
-        <TreeItem nodeId="1" label="Applications">
-          <TreeItem nodeId="2" label="Calendar" />
-          <TreeItem nodeId="3" label="Chrome" />
-          <TreeItem nodeId="4" label="Webstorm" />
-        </TreeItem>
-        <TreeItem nodeId="5" label="Documents">
-          <TreeItem nodeId="10" label="OSS" />
-          <TreeItem nodeId="6" label="Material-UI">
-            <TreeItem nodeId="7" label="src">
-              <TreeItem nodeId="8" label="index.js" />
-              <TreeItem nodeId="9" label="tree-view.js" />
-            </TreeItem>
-          </TreeItem>
-        </TreeItem>
-      </TreeView>
+              <TreeView
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpandIcon={<ChevronRightIcon />}
+              >
+                {this.state.atStationTable.map((tItem, uiIndex) => (
+                  <TreeItem nodeId={tItem.ulid} label={tItem.label}>
+                    {tItem.items.map((tItemSub, uiIndexSub) => (
+                      <TreeItem nodeId={tItemSub.ulid} label={tItemSub.label} />
+                    ))}
+                  </TreeItem>
+                ))}
+              </TreeView>
             </div>
             <div id='StationList'>
                 {atList}
