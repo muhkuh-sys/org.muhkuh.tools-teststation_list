@@ -17,6 +17,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 import TreeItem from '@material-ui/lab/TreeItem';
 import TreeView from '@material-ui/lab/TreeView';
 import Typography from '@material-ui/core/Typography';
@@ -58,7 +60,8 @@ class TeststationList extends React.Component {
       atStationList: [],
       atStationTable: [],
       fForwardDialogIsOpen: false,
-      strForwardUrl: ''
+      strForwardUrl: '',
+      fErrorSnackIsOpen: false
     };
 
     this.atAvatars = {
@@ -96,11 +99,13 @@ class TeststationList extends React.Component {
     }
   }
 
-  onEventError(tError) {
-    console.log(tError);
+  onEventError = (tError) => {
+    this.setState({
+      fErrorSnackIsOpen: true
+    });
   }
 
-  onEventMessage(tMessage) {
+  onEventMessage = (tMessage) => {
     // Try to parse the message as JSON.
     let tJson = undefined;
     const strData = tMessage.data;
@@ -250,6 +255,16 @@ class TeststationList extends React.Component {
     })
   }
 
+  onErrorSnackClose = (tEvent, strReason) => {
+    if( strReason==='clickaway')  {
+      return;
+    }
+
+    this.setState({
+      fErrorSnackIsOpen: false
+    });
+  }
+
   render() {
     const atAvatars = this.atAvatars;
 
@@ -329,6 +344,12 @@ class TeststationList extends React.Component {
                 </Button>
               </DialogActions>
             </Dialog>
+
+            <Snackbar open={this.state.fErrorSnackIsOpen} autoHideDuration={6000} onClose={this.onErrorSnackClose}>
+              <MuiAlert elevation={6} variant="filled" onClose={this.onErrorSnackClose} severity="error">
+                Failed to connect to the list of available test stations!
+              </MuiAlert>
+            </Snackbar>
           </div>
         </CssBaseline>
       </ThemeProvider>
