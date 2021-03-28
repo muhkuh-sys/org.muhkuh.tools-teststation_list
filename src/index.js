@@ -118,18 +118,10 @@ class TeststationList extends React.Component {
     // Is there a new item to insert?
     if( tNewItem!==null ) {
       // Sort the new item into the list by its date.
-      const sizNewStationList = atNewStationList.length
-      if( sizNewStationList==0 ) {
+      const uiPos = atNewStationList.findIndex(item => tNewItem.date>item.date);
+      if( uiPos==-1 ) {
         atNewStationList.push(tNewItem)
       } else {
-        const tNewItemDate = tNewItem.date;
-        let uiPos = 0;
-        while( uiPos<atNewStationList.length ) {
-          if( tNewItemDate>atNewStationList[uiPos].date ) {
-            break;
-          }
-          uiPos += 1;
-        }
         atNewStationList.splice(uiPos, 0, tNewItem);
       }
       fChanged = true
