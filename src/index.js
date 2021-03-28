@@ -17,10 +17,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import TreeItem from '@material-ui/lab/TreeItem';
 import TreeView from '@material-ui/lab/TreeView';
 import Typography from '@material-ui/core/Typography';
+import { ThemeProvider } from '@material-ui/core/styles';
 import { ulid } from 'ulid';
 
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -268,7 +268,7 @@ class TeststationList extends React.Component {
     }, this);
 
     return (
-      <MuiThemeProvider theme={TesterUITheme}>
+      <ThemeProvider theme={TesterUITheme}>
         <CssBaseline>
           <div id="Root">
             <div id="StationTable">
@@ -309,7 +309,7 @@ class TeststationList extends React.Component {
             </Dialog>
           </div>
         </CssBaseline>
-      </MuiThemeProvider>
+      </ThemeProvider>
     );
   }
 }
