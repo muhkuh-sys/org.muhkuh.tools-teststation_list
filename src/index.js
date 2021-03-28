@@ -12,6 +12,11 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import TreeItem from '@material-ui/lab/TreeItem';
 import TreeView from '@material-ui/lab/TreeView';
@@ -51,7 +56,9 @@ class TeststationList extends React.Component {
 
     this.state = {
       atStationList: [],
-      atStationTable: []
+      atStationTable: [],
+      fForwardDialogIsOpen: false,
+      strForwardUrl: ''
     };
 
     this.atAvatars = {
@@ -223,8 +230,21 @@ class TeststationList extends React.Component {
   }
 
   onStationSelect(strUlid) {
-    console.log('Station select');
-    console.log(strUlid);
+    // Search the ULID in the list of stations.
+    let tItem = this.state.atStationList.find(item => item.ulid==strUlid);
+    if( tItem!==undefined ) {
+      const strUrl = `http://${tItem.data.ip}:${tItem.data.port}`;
+      this.setState({
+        fForwardDialogIsOpen: true,
+        strForwardUrl: strUrl
+      })
+    }
+  }
+
+  onForwardDialogClose = () => {
+    this.setState({
+      fForwardDialogIsOpen: false
+    })
   }
 
   render() {
@@ -287,6 +307,25 @@ class TeststationList extends React.Component {
             <div id='StationList'>
                 {atList}
             </div>
+
+            <Dialog
+              open={this.state.fForwardDialogIsOpen}
+              onClose={this.onForwardDialogClose}
+              aria-labelledby="forward-dialog-title"
+              aria-describedby="forward-dialog-description"
+            >
+              <DialogTitle id="forward-dialog-title">Go to the teststation</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="forward-dialog-description">
+                  Open the test station at <a href={this.state.strForwardUrl}>{this.state.strForwardUrl}</a> .
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.onForwardDialogClose} color="primary">
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
         </CssBaseline>
       </MuiThemeProvider>
