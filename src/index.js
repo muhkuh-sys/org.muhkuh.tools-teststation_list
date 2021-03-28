@@ -196,15 +196,8 @@ class TeststationList extends React.Component {
           }
           // Create a new subitem.
           const strLabelSub = `${tStation.data.ssdp.name} • ${tStation.data.test.subtitle}`;
-          uiPos = 0;
           let atItemsSub = tItem.items;
-          const sizItemsSub = atItemsSub.length;
-          while( uiPos<sizItemsSub ) {
-            if( strLabelSub<atItemsSub[uiPos].label ) {
-              break;
-            }
-            uiPos += 1;
-          }
+          uiPos = atItemsSub.findIndex(item => strLabelSub<item.label);
           const tItemSub = {
             label: strLabelSub,
             ulid: tStation.ulid
