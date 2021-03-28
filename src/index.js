@@ -173,16 +173,12 @@ class TeststationList extends React.Component {
           // Sort the new item into the table by its name.
           const sizNewStationTable = atNewStationTable.length;
           const strLabel = tStation.data.test.title;
-          let uiPos = 0;
           let tItem = null;
-          while( uiPos<sizNewStationTable ) {
-            if( strLabel==atNewStationTable[uiPos].label ) {
-              tItem = atNewStationTable[uiPos];
-              break;
-            } else if( strLabel<atNewStationTable[uiPos].label ) {
-              break;
-            }
-            uiPos += 1;
+          let uiPos = atNewStationTable.findIndex(item => strLabel<=item.label);
+          if( uiPos==-1 ) {
+            uiPos = sizNewStationTable;
+          } else if( strLabel==atNewStationTable[uiPos].label ) {
+            tItem = atNewStationTable[uiPos];
           }
           // Found an item?
           if( tItem === null ) {
