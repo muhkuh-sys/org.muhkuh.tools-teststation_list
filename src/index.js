@@ -78,6 +78,10 @@ class TeststationList extends React.Component {
     // Mark entries as "timed out" after this amount of milliseconds.
     // The value 1000 * 60 * 60 * 24 * 7 would be 1 week.
     this.tTimeout = 1000 * 60 * 60 * 24 * 7;
+
+    // Weed out entried after this amount of milliseconds.
+    // The value 1000 * 60 * 60 * 24 * 14 would be 2 weeks.
+    this.tWeedout = 1000 * 60 * 60 * 24 * 14;
   }
 
   // This is just a demo to add events.
@@ -164,7 +168,6 @@ class TeststationList extends React.Component {
     let atIPs = [];
     let tNow = new Date();
     const tTimeout = this.tTimeout;
-    const tWeedout = this.tWeedout;
     atNewStationList.forEach(function(tStation, uiIndex) {
       const uiOldState = tStation.state;
       const strIP = tStation.data.ip;
@@ -180,7 +183,7 @@ class TeststationList extends React.Component {
         // Add the IP to the list.
         atIPs.push(strIP);
 
-          // Get the age of the entry.
+        // Get the age of the entry.
         const tAgeMs = tNow.getTime() - tStation.date.getTime();
         if( tAgeMs>tTimeout ) {
           if( uiOldState != STATION_STATE_Lost ) {
@@ -197,6 +200,19 @@ class TeststationList extends React.Component {
         }
       }
     }, this);
+
+    const tWeedout = this.tWeedout;
+    atNewStationList.forEach(function(tStation, uiIndex) {
+      // Get the age of the entry.
+      const tAgeMs = tNow.getTime() - tStation.date.getTime();
+      if( tAgeMs>tWeedout ) {
+        // Mark the item for deletion.
+        tStation.state = STATION_STATE_Delete;
+        fChanged = true;
+      }
+    }, this);
+    // Remove all items which are marked for deletion.
+    atNewStationList = atNewStationList.filter(item => item.state!=STATION_STATE_Delete);
 
     if( fChanged == true ) {
       // Convert the station list to a table.
