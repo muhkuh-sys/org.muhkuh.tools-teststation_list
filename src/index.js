@@ -331,6 +331,10 @@ class TeststationList extends React.Component {
         <CssBaseline>
           <div id="Root">
             <div id="StationTable">
+              <div id="StationHeading">
+                <Typography variant="h3">Stations</Typography>
+              </div>
+
               <TreeView
                 defaultCollapseIcon={<ExpandMoreIcon />}
                 defaultExpandIcon={<ChevronRightIcon />}
@@ -345,7 +349,10 @@ class TeststationList extends React.Component {
               </TreeView>
             </div>
             <div id='StationList'>
-                {atList}
+              <div id="StationHeading">
+                <Typography variant="h3">Timeline</Typography>
+              </div>
+              {atList}
             </div>
 
             <Dialog
