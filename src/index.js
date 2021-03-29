@@ -70,9 +70,9 @@ class TeststationList extends React.Component {
     };
 
     this.atAvatars = {
-      STATION_STATE_Ok: (<Avatar aria-label="teststation" src={ImgCow} />),
-      STATION_STATE_Lost: (<Avatar aria-label="teststation"><AccessTimeIcon /></Avatar>),
-      STATION_STATE_IpConflict: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
+      [STATION_STATE_Ok]: (<Avatar aria-label="teststation" src={ImgCow} />),
+      [STATION_STATE_Lost]: (<Avatar aria-label="teststation"><AccessTimeIcon /></Avatar>),
+      [STATION_STATE_IpConflict]: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
     }
 
     // Mark entries as "timed out" after this amount of milliseconds.
