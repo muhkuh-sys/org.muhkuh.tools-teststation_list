@@ -81,13 +81,13 @@ class TeststationList extends React.Component {
     }
 
     // Mark entries as "timed out" after this amount of milliseconds.
-    // The value 1000 * 60 * 60 * 24 * 7 would be 1 week.
-    this.tTimeout = 1000 * 60 * 60 * 24 * 7;
+    // The value 1000 * 60 * 20 would be 20 minutes.
+    this.tTimeout = 1000 * 60 * 20;
     this.strTimeout = humanizeDuration(this.tTimeout);
 
     // Weed out entried after this amount of milliseconds.
-    // The value 1000 * 60 * 60 * 24 * 14 would be 2 weeks.
-    this.tWeedout = 1000 * 60 * 60 * 24 * 14;
+    // The value 1000 * 60 * 60 * 1 would be 1 hour.
+    this.tWeedout = 1000 * 60 * 60 * 1;
     this.strWeedout = humanizeDuration(this.tWeedout);
   }
 
