@@ -36,6 +36,11 @@ import ImgCow from './images/muhkuh.svg';
 import TesterUITheme from './testerui_theme';
 
 
+const STATION_STATE_Ok = 0;
+const STATION_STATE_Lost = 1;
+const STATION_STATE_IpConflict = 2;
+const STATION_STATE_Delete = 3;
+
 class TeststationList extends React.Component {
   constructor(props) {
     super(props);
@@ -65,9 +70,9 @@ class TeststationList extends React.Component {
     };
 
     this.atAvatars = {
-      0: (<Avatar aria-label="teststation" src={ImgCow} />),
-      1: (<Avatar aria-label="teststation"><AccessTimeIcon /></Avatar>),
-      2: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
+      STATION_STATE_Ok: (<Avatar aria-label="teststation" src={ImgCow} />),
+      STATION_STATE_Lost: (<Avatar aria-label="teststation"><AccessTimeIcon /></Avatar>),
+      STATION_STATE_IpConflict: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
     }
 
     // Mark entries as "timed out" after this amount of milliseconds.
@@ -118,7 +123,7 @@ class TeststationList extends React.Component {
       // Create a new item.
       let tNewItem = {
         ulid: ulid(),
-        state: 0,
+        state: STATION_STATE_Ok,
         date: this.strToDate(tJson.timestamp),
         data: tJson
       };
@@ -159,15 +164,16 @@ class TeststationList extends React.Component {
     let atIPs = [];
     let tNow = new Date();
     const tTimeout = this.tTimeout;
+    const tWeedout = this.tWeedout;
     atNewStationList.forEach(function(tStation, uiIndex) {
       const uiOldState = tStation.state;
       const strIP = tStation.data.ip;
       // Is the IP part of the list? This means one of the already processed
       // entries had the same.
       if( atIPs.includes(strIP) == true ) {
-        if( uiOldState != 2 ) {
-          // Set the state to "blocked".
-          tStation.state = 2;
+        if( uiOldState != STATION_STATE_IpConflict ) {
+          // Set the state to "IP conflict".
+          tStation.state = STATION_STATE_IpConflict;
           fChanged = true;
         }
       } else {
@@ -177,15 +183,15 @@ class TeststationList extends React.Component {
           // Get the age of the entry.
         const tAgeMs = tNow.getTime() - tStation.date.getTime();
         if( tAgeMs>tTimeout ) {
-          if( uiOldState != 1 ) {
-            // Set the state to "timeout".
-            tStation.state = 1;
+          if( uiOldState != STATION_STATE_Lost ) {
+            // Set the state to "lost".
+            tStation.state = STATION_STATE_Lost;
             fChanged = true;
           }
         } else {
-          if( uiOldState != 0 ) {
+          if( uiOldState != STATION_STATE_Ok ) {
             // Set the state to "ok".
-            tStation.state = 0;
+            tStation.state = STATION_STATE_Ok;
             fChanged = true;
           }
         }
@@ -196,7 +202,7 @@ class TeststationList extends React.Component {
       // Convert the station list to a table.
       let atNewStationTable = []
       atNewStationList.forEach(function(tStation, uiIndex) {
-        if( tStation.state==0 ) {
+        if( tStation.state==STATION_STATE_Ok ) {
           // Sort the new item into the table by its name.
           const sizNewStationTable = atNewStationTable.length;
           const strLabel = tStation.data.test.title;
@@ -273,7 +279,7 @@ class TeststationList extends React.Component {
       const uiState = tStation.state;
 
       let tAction = null;
-      if( uiState==0 ) {
+      if( uiState==STATION_STATE_Ok ) {
         tAction = (
           <CardActions>
             <Button variant="contained" endIcon={<PlayArrowIcon />} onClick={() => this.onStationSelect(tStation.ulid)}>Go </Button>
