@@ -25,3 +25,9 @@
 #StationItem {
   margin: 0.5em;
 }
+
+#Help {
+  position: fixed;
+  top: 0;
+  right: 1em;
+}

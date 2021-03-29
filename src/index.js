@@ -17,6 +17,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
 import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import TreeItem from '@material-ui/lab/TreeItem';
@@ -25,9 +26,12 @@ import Typography from '@material-ui/core/Typography';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { ulid } from 'ulid';
 
+const humanizeDuration = require('humanize-duration');
+
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
@@ -66,7 +70,8 @@ class TeststationList extends React.Component {
       atStationTable: [],
       fForwardDialogIsOpen: false,
       strForwardUrl: '',
-      fErrorSnackIsOpen: false
+      fErrorSnackIsOpen: false,
+      fHelpDialogIsOpen: false
     };
 
     this.atAvatars = {
@@ -78,10 +83,12 @@ class TeststationList extends React.Component {
     // Mark entries as "timed out" after this amount of milliseconds.
     // The value 1000 * 60 * 60 * 24 * 7 would be 1 week.
     this.tTimeout = 1000 * 60 * 60 * 24 * 7;
+    this.strTimeout = humanizeDuration(this.tTimeout);
 
     // Weed out entried after this amount of milliseconds.
     // The value 1000 * 60 * 60 * 24 * 14 would be 2 weeks.
     this.tWeedout = 1000 * 60 * 60 * 24 * 14;
+    this.strWeedout = humanizeDuration(this.tWeedout);
   }
 
   // This is just a demo to add events.
@@ -277,6 +284,18 @@ class TeststationList extends React.Component {
     })
   }
 
+  onHelp = () => {
+    this.setState({
+      fHelpDialogIsOpen: true
+    })
+  }
+
+  onHelpDialogClose = () => {
+    this.setState({
+      fHelpDialogIsOpen: false
+    })
+  }
+
   onErrorSnackClose = (tEvent, strReason) => {
     if( strReason==='clickaway')  {
       return;
@@ -354,6 +373,11 @@ class TeststationList extends React.Component {
               </div>
               {atList}
             </div>
+            <div id="Help">
+              <IconButton aria-label="help" onClick={this.onHelp}>
+                <HelpOutlineIcon />
+              </IconButton>
+            </div>
 
             <Dialog
               open={this.state.fForwardDialogIsOpen}
@@ -370,6 +394,50 @@ class TeststationList extends React.Component {
               <DialogActions>
                 <Button onClick={this.onForwardDialogClose} color="primary">
                   Cancel
+                </Button>
+              </DialogActions>
+            </Dialog>
+
+            <Dialog
+              open={this.state.fHelpDialogIsOpen}
+              onClose={this.onHelpDialogClose}
+              aria-labelledby="help-dialog-title"
+              aria-describedby="help-dialog-description"
+            >
+              <DialogTitle id="help-dialog-title">Help</DialogTitle>
+              <DialogContent id="help-dialog-description">
+                <Typography variant="body1" gutterBottom>
+                  This page shows all available test stations in the network.
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  The "Stations" list is sorted by the test title, which is usually the device number and revision.
+                  It shows only test stations which are available.
+                  Click on an entry to open a dialog with a link to the test station.
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  The "Timeline" presents another view on the test stations which is sorted by the last information received from the station.
+                  The state of a station is shown with one of these icons:
+                </Typography>
+
+                {this.atAvatars[STATION_STATE_Ok]}
+                <Typography variant="body1" gutterBottom>
+                  The station is available.
+                </Typography>
+                {this.atAvatars[STATION_STATE_Lost]}
+                <Typography variant="body1" gutterBottom>
+                  The station did not send something for more than {this.strTimeout}.
+                </Typography>
+                {this.atAvatars[STATION_STATE_IpConflict]}
+                <Typography variant="body1" gutterBottom>
+                  The IP of the station was re-used by another station.
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  Click on a "Go" button in the timeline to open a dialog with a link to the test station.
+                </Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.onHelpDialogClose} color="primary">
+                  Ok
                 </Button>
               </DialogActions>
             </Dialog>
