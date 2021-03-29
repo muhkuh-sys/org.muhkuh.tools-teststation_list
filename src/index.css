@@ -10,6 +10,7 @@
 }
 
 #StationList {
+  min-width: 25%;
   display: table-cell;
   overflow-y: scroll;
 }
