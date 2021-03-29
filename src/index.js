@@ -442,7 +442,7 @@ class TeststationList extends React.Component {
               </DialogActions>
             </Dialog>
 
-            <Snackbar open={this.state.fErrorSnackIsOpen} autoHideDuration={6000} onClose={this.onErrorSnackClose}>
+            <Snackbar open={this.state.fErrorSnackIsOpen} onClose={this.onErrorSnackClose}>
               <MuiAlert elevation={6} variant="filled" onClose={this.onErrorSnackClose} severity="error">
                 Failed to connect to the list of available test stations!
               </MuiAlert>
