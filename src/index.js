@@ -99,14 +99,16 @@ class TeststationList extends React.Component {
     tSource.onerror = this.onEventError;
     tSource.onmessage = this.onEventMessage;
 
-    this.interval_demo = setInterval(() => this.tick_demo(), 1000);
+    // Start a new timer which triggers every minute.
+    this.tMinuteInterval = setInterval(() => this.onMinuteTick(), 1000 * 60);
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval_demo);
+    clearInterval(this.tMinuteInterval);
   }
 
-  tick_demo() {
+  onMinuteTick() {
+/*
     // Is something left in the demo contents array?
     let strEntry = this.atDemoEntries.shift()
     if( strEntry === undefined ) {
@@ -115,6 +117,8 @@ class TeststationList extends React.Component {
     } else {
       this.onEventMessage({data:strEntry});
     }
+*/
+    this.updateList(null);
   }
 
   onEventError = (tError) => {
