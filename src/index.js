@@ -166,6 +166,14 @@ class TeststationList extends React.Component {
 
     // Is there a new item to insert?
     if( tNewItem!==null ) {
+      // Search for items with the same IP and UUID.
+      let tItem = atNewStationList.find(item => ((item.data.ip===tNewItem.data.ip) && (item.data.ssdp.uuid===tNewItem.data.ssdp.uuid)));
+      if( tItem!==undefined ) {
+        tItem.state = STATION_STATE_Delete;
+      }
+      // Remove all items which are marked for deletion.
+      atNewStationList = atNewStationList.filter(item => item.state!=STATION_STATE_Delete);
+
       // Sort the new item into the list by its date.
       const uiPos = atNewStationList.findIndex(item => tNewItem.date>item.date);
       if( uiPos==-1 ) {
