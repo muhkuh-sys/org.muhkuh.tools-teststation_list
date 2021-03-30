@@ -48,7 +48,7 @@ const STATION_STATE_Delete = 3;
 class TeststationList extends React.Component {
   constructor(props) {
     super(props);
-
+/*
     this.atDemoEntries = [
       '{"timestamp":"2021-03-01 12:35:40","port":9090,"ssdp":{"uuid":"9f4eac14-f5de-4e85-a66c-d056221983a6","name":"Muhkuh Teststation 1912.102R3 Vorverguss NETFIELD IO-LINK WIRELESS 30"},"ip":"192.168.0.51","test":{"title":"1912.102 R3 Vorverguss","subtitle":"NETFIELD IO-LINK WIRELESS 30"}}',
       '{"port":9090,"timestamp":"2021-01-28 17:34:46","ssdp":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"ip":"192.168.0.80"}',
@@ -64,7 +64,7 @@ class TeststationList extends React.Component {
       '{"ssdp":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"port":9090,"ip":"192.168.0.88","timestamp":"2021-03-25 06:08:29"}',
       '{"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"timestamp":"2021-03-25 14:08:50","ssdp":{"uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9","name":"Muhkuh Teststation 9387.001R6"},"port":9090,"ip":"192.168.0.88"}'
     ]
-
+*/
     this.state = {
       atStationList: [],
       atStationTable: [],
@@ -95,9 +95,9 @@ class TeststationList extends React.Component {
 
   // This is just a demo to add events.
   componentDidMount() {
-//    var tSource = new EventSource('http://localhost:8080/teststations/sub');
-//    tSource.onerror = this.onEventError;
-//    tSource.onmessage = this.onEventMessage;
+    var tSource = new EventSource('sub');
+    tSource.onerror = this.onEventError;
+    tSource.onmessage = this.onEventMessage;
 
     this.interval_demo = setInterval(() => this.tick_demo(), 1000);
   }
