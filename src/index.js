@@ -137,6 +137,12 @@ class TeststationList extends React.Component {
       console.warn('Received invalid JSON:', strData);
     }
     if( tJson!==undefined ) {
+      // Patch old-style data.
+      // If the data has an "ssdp" key, but no "station" key, add the "ssdp" data also as "station".
+      if( ("ssdp" in tJson) && !("station" in tJson) ) {
+        tJson.station = tJson.ssdp;
+      }
+
       // Create a new item.
       let tNewItem = {
         ulid: ulid(),
