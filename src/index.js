@@ -27,6 +27,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { ulid } from 'ulid';
 
 const humanizeDuration = require('humanize-duration');
+let NchanSubscriber = require("nchan");
 
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -91,19 +92,36 @@ class TeststationList extends React.Component {
     this.tWeedout = 1000 * 60 * 60 * 1;
 //    this.tWeedout = 1000 * 60 * 60 * 24 * 14;
     this.strWeedout = humanizeDuration(this.tWeedout);
+
+    this.tSub = null;
   }
 
   // This is just a demo to add events.
   componentDidMount() {
-    var tSource = new EventSource('sub');
-    tSource.onerror = this.onEventError;
-    tSource.onmessage = this.onEventMessage;
+    var opt = {
+      subscriber: 'websocket'
+    }
+    var sub = new NchanSubscriber('sub', opt);
+    sub.on('error', this.onEventError);
+    sub.on('message', this.onEventMessage);
+    sub.start();
+    this.tSub = sub;
+
+//    var tSource = new EventSource('/teststations/sub');
+//    tSource.onerror = this.onEventError;
+//    tSource.onmessage = this.onEventMessage;
 
     // Start a new timer which triggers every minute.
     this.tMinuteInterval = setInterval(() => this.onMinuteTick(), 1000 * 60);
   }
 
   componentWillUnmount() {
+    var sub = this.tSub;
+    if( sub!=null ) {
+      sub.stop();
+      this.tSub = null;
+    }
+
     clearInterval(this.tMinuteInterval);
   }
 
@@ -128,9 +146,13 @@ class TeststationList extends React.Component {
   }
 
   onEventMessage = (tMessage) => {
+    // Show the message in the log.
+//    console.log("New message received")
+//    console.log(tMessage)
+
     // Try to parse the message as JSON.
     let tJson = undefined;
-    const strData = tMessage.data;
+    const strData = tMessage;
     try {
       tJson = JSON.parse(strData);
     } catch {
