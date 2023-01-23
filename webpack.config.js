@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -61,7 +62,11 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       favicon: path.join(__dirname,'src','images','muhkuh.svg'),
-      template: path.join(__dirname,'src','index.html')
+      template: path.join(__dirname,'src','index.ejs'),
+      inject: 'body'
+    }),
+    new webpack.DefinePlugin({
+      'PROJECT_VERSION': JSON.stringify(require("./package.json").version)
     })
   ]
 };
