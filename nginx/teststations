@@ -1,0 +1,35 @@
+# This is the publisher endpoint for the teststation list.
+server {
+        # available only on localhost
+        listen 8080;
+        location = /pub {
+                nchan_publisher;
+                nchan_channel_group group_teststation_list;
+                nchan_channel_id channel_teststation_list;
+                nchan_message_buffer_length 16384;
+                nchan_message_timeout 1h;
+        }
+}
+
+
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www;
+
+        index index.html;
+
+        server_name _;
+
+        location = /sub {
+                nchan_subscriber;
+                nchan_channel_group group_teststation_list;
+                nchan_channel_id channel_teststation_list;
+        }
+
+        location / {
+                # First attempt to serve request as file, then fall back to displaying a 404.
+                try_files $uri =404;
+        }
+}
