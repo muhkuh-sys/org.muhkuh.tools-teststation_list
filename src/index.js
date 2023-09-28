@@ -454,7 +454,7 @@ class TeststationList extends React.Component {
               <DialogTitle id="forward-dialog-title">Go to the teststation</DialogTitle>
               <DialogContent>
                 <DialogContentText id="forward-dialog-description">
-                  Open the test station at <a href={this.state.strForwardUrl}>{this.state.strForwardUrl}</a> .
+                  Open the test station at <Link href={this.state.strForwardUrl}>{this.state.strForwardUrl}</Link>.
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
