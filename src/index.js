@@ -312,7 +312,17 @@ class TeststationList extends React.Component {
     // Search the ULID in the list of stations.
     let tItem = this.state.atStationList.find(item => item.ulid==strUlid);
     if( tItem!==undefined ) {
-      const strUrl = `http://${tItem.data.ip}:${tItem.data.port}`;
+      // Get defaults for "proto" and "path".
+      let strProto = 'http';
+      let strPath = '';
+      if( 'proto' in tItem.data ) {
+        strProto = tItem.data.proto;
+      }
+      if( 'path' in tItem.data ) {
+        strPath = tItem.data.path;
+      }
+      // Construct the URL from all elements.
+      const strUrl = `${strProto}://${tItem.data.ip}:${tItem.data.port}/${strPath}`;
       this.setState({
         fForwardDialogIsOpen: true,
         strForwardUrl: strUrl
