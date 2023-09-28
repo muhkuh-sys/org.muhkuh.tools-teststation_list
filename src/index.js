@@ -33,7 +33,6 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import Typography from '@mui/material/Typography';
 import { ulid } from 'ulid';
 
-const humanizeDuration = require('humanize-duration');
 let NchanSubscriber = require("nchan");
 
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -96,17 +95,18 @@ class TeststationList extends React.Component {
       [STATION_STATE_IpConflict]: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
     }
 
-    // Mark entries as "timed out" after this amount of milliseconds.
-    // The value 1000 * 60 * 20 would be 20 minutes.
-    this.tTimeout = 1000 * 60 * 20;
-//    this.tTimeout = 1000 * 60 * 60 * 24 * 7;
-    this.strTimeout = humanizeDuration(this.tTimeout);
+    // Assume an interval of 5 minutes for stations which do not report a value.
+    this.uiDefaultIntervalMs = 1000 * 60 * 5;
 
-    // Weed out entried after this amount of milliseconds.
-    // The value 1000 * 60 * 60 * 1 would be 1 hour.
-    this.tWeedout = 1000 * 60 * 60 * 1;
-//    this.tWeedout = 1000 * 60 * 60 * 24 * 14;
-    this.strWeedout = humanizeDuration(this.tWeedout);
+    // Mark entries as "timed out" after the interval elapsed n times without a notification.
+    // The value 4 results in 8 seconds for the new default interval of 2 seconds.
+    this.uiTimeoutInIntervals = 4;
+
+//    this.strTimeout = humanizeDuration(this.tTimeout);
+
+    // Weed out entries after the interval elapsed n times without a notification.
+    // The value 12 results in 24 Seconds for the new default interval of 2 seconds.
+    this.uiWeedoutInIntervals = 12;
 
     this.tMACQuickSelect = null;
 
@@ -128,8 +128,8 @@ class TeststationList extends React.Component {
 //    tSource.onerror = this.onEventError;
 //    tSource.onmessage = this.onEventMessage;
 
-    // Start a new timer which triggers every minute.
-    this.tMinuteInterval = setInterval(() => this.onMinuteTick(), 1000 * 60);
+    // Start a new timer which triggers every second.
+    this.tMaintenanceTimer = setInterval(() => this.onMaintenanceTick(), 1000);
   }
 
   componentWillUnmount() {
@@ -139,10 +139,10 @@ class TeststationList extends React.Component {
       this.tSub = null;
     }
 
-    clearInterval(this.tMinuteInterval);
+    clearInterval(this.tMaintenanceTimer);
   }
 
-  onMinuteTick() {
+  onMaintenanceTick() {
 /*
     // Is something left in the demo contents array?
     let strEntry = this.atDemoEntries.shift()
@@ -192,6 +192,9 @@ class TeststationList extends React.Component {
       }
       if( !("path" in tJson) ) {
         tJson.path = "";
+      }
+      if( !("interval" in tJson) ) {
+        tJson.interval = this.uiDefaultIntervalMs;
       }
 
       // Create a new item.
@@ -245,7 +248,7 @@ class TeststationList extends React.Component {
     // Also mark timeouts and busy stations.
     let atIPs = [];
     let tNow = new Date();
-    const tTimeout = this.tTimeout;
+    const uiTimeoutInIntervals = this.uiTimeoutInIntervals;
     atNewStationList.forEach(function(tStation, uiIndex) {
       const uiOldState = tStation.state;
       const strIP = tStation.data.ip;
@@ -263,7 +266,7 @@ class TeststationList extends React.Component {
 
         // Get the age of the entry.
         const tAgeMs = tNow.getTime() - tStation.date.getTime();
-        if( tAgeMs>tTimeout ) {
+        if( tAgeMs>(tStation.data.interval * uiTimeoutInIntervals * 1000) ) {
           if( uiOldState != STATION_STATE_Lost ) {
             // Set the state to "lost".
             tStation.state = STATION_STATE_Lost;
@@ -285,11 +288,11 @@ class TeststationList extends React.Component {
       }
     }, this);
 
-    const tWeedout = this.tWeedout;
+    const uiWeedoutInIntervals = this.uiWeedoutInIntervals;
     atNewStationList.forEach(function(tStation, uiIndex) {
       // Get the age of the entry.
       const tAgeMs = tNow.getTime() - tStation.date.getTime();
-      if( tAgeMs>tWeedout ) {
+      if( tAgeMs>(tStation.data.interval * uiWeedoutInIntervals * 1000) ) {
         // Mark the item for deletion.
         tStation.state = STATION_STATE_Delete;
         fChanged = true;
@@ -626,7 +629,8 @@ class TeststationList extends React.Component {
                 </Typography>
                 {this.atAvatars[STATION_STATE_Lost]}
                 <Typography variant="body1" gutterBottom>
-                  The station did not send something for more than {this.strTimeout}.
+                  The expected notifications from the station were not received for at least {this.uiTimeoutInIntervals} times.
+                  After {this.uiWeedoutInIntervals} it will be removed from the list.
                 </Typography>
                 {this.atAvatars[STATION_STATE_IpConflict]}
                 <Typography variant="body1" gutterBottom>
