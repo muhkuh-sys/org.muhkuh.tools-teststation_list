@@ -4,7 +4,17 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "build release",
+            "type": "shell",
+            "command": "npm run release",
+            "problemMatcher": "$eslint-stylish",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "build debug",
             "type": "shell",
             "command": "npm run debug",
             "problemMatcher": "$eslint-stylish",
