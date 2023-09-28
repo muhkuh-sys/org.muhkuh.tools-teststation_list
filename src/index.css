@@ -31,3 +31,18 @@
   top: 0;
   right: 1em;
 }
+
+.StationIP {
+  display: inline;
+  font-family: monospace;
+}
+
+.StationMAC {
+  display: inline;
+  font-family: monospace;
+}
+
+.StationMACMissing {
+  display: inline;
+  font-style: italic;
+}

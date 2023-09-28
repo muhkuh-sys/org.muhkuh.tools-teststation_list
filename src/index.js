@@ -364,6 +364,12 @@ class TeststationList extends React.Component {
         );
       }
 
+      let tMAC = null;
+      if( 'mac' in tStation ) {
+        tMAC = (<div class="StationMAC">{tStation.mac}</div>);
+      } else {
+        tMAC = (<div class="StationMACMissing">not available</div>);
+      }
       atList.push(
         <Card key={tStation.ulid} id="StationItem">
           <CardHeader
@@ -379,7 +385,7 @@ class TeststationList extends React.Component {
             {tStation.data.test.subtitle}
             </Typography>
             <Typography display="block" variant="subtitle2" color="textSecondary">
-            {`IP ${tStation.data.ip}`}
+            IP: <div class="StationIP">{tStation.data.ip}</div>, MAC: {tMAC}
             </Typography>
           </CardContent>
           {tAction}
