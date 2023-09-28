@@ -101,7 +101,7 @@ class TeststationList extends React.Component {
     var opt = {
       subscriber: 'websocket'
     }
-    var sub = new NchanSubscriber('sub', opt);
+    var sub = new NchanSubscriber('/sub', opt);
     sub.on('error', this.onEventError);
     sub.on('message', this.onEventMessage);
     sub.start();
