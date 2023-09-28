@@ -79,8 +79,15 @@ class TeststationList extends React.Component {
       fForwardDialogIsOpen: false,
       strForwardUrl: '',
       fErrorSnackIsOpen: false,
-      fHelpDialogIsOpen: false
+      fHelpDialogIsOpen: false,
+      tMatchingStation: null
     };
+
+    this.tTheme = createTheme({
+      palette: {
+        mode: 'dark',
+      }
+    });
 
     this.atAvatars = {
       [STATION_STATE_Ok]: (<Avatar aria-label="teststation" src={ImgCow} />),
@@ -100,6 +107,8 @@ class TeststationList extends React.Component {
     this.tWeedout = 1000 * 60 * 60 * 1;
 //    this.tWeedout = 1000 * 60 * 60 * 24 * 14;
     this.strWeedout = humanizeDuration(this.tWeedout);
+
+    this.tMACQuickSelect = null;
 
     this.tSub = null;
   }
@@ -376,11 +385,67 @@ class TeststationList extends React.Component {
     });
   }
 
+
+  handleMACChange = (tEvent, tStation) => {
+    this.setState({
+      tMatchingStation: tStation
+    });
+  }
+
+
+  handleEnterMAC = (tEvent) => {
+    // The handler is called for every key press. Filter out the "Enter" key.
+    if( tEvent.key==='Enter' ) {
+        // Does a quick select item exist and is it not disabled?
+      const tMACQuickSelect = this.tMACQuickSelect;
+      if( tMACQuickSelect!==null && tMACQuickSelect.state===STATION_STATE_Ok ) {
+        // Yes, use it as the new value for the MAC selector.
+        // Call handleStartTest after the state is updated.
+        this.setState(
+          {
+            tMatchingStation: tMACQuickSelect
+          },
+          () => {
+            this.onStationSelect(this.state.tMatchingStation.ulid);
+          }
+        );
+
+        // Remove focus from the input field. This will close any drop down menu.
+        tEvent.target.blur();
+
+        // Clear the quick select item.
+        this.tMACQuickSelect = null;
+      }
+      tEvent.preventDefault();
+    }
+  }
+
+
+  filterStations = (atOptions, tState) => {
+    // Get the contents of the input field. Look for stations with this MAC.
+    let strPattern = tState.inputValue;
+
+    // Filter all available tests based on the pattern.
+    const atFiltered = atOptions.filter(tStation => (('data' in tStation) && ('mac' in tStation.data) && (tStation.data.mac.startsWith(strPattern))) );
+
+    // If there is only 1 result, allow a direct selection with "enter".
+    // Do not provide this shortcut if there are more than one results, even if all but one are disabled.
+    if( atFiltered.length===1 ) {
+      this.tMACQuickSelect = atFiltered[0];
+    } else {
+      this.tMACQuickSelect = null;
+    }
+
+    return atFiltered;
+  }
+
+
   render() {
     const atAvatars = this.atAvatars;
 
     let atList = [];
-    this.state.atStationList.forEach(function(tStation, uiIndex) {
+    const atStationList = this.state.atStationList;
+    atStationList.forEach(function(tStation, uiIndex) {
       const uiState = tStation.state;
 
       let tAction = null;
@@ -425,6 +490,59 @@ class TeststationList extends React.Component {
     return (
       <ThemeProvider theme={this.tTheme}>
         <CssBaseline>
+            <Box sx={{
+              display: 'flex',
+              width: '100vw',
+              border: (theme) => `1px solid ${theme.palette.divider}`,
+              borderRadius: 1,
+              bgcolor: 'background.paper',
+            }}>
+              <FormControl sx={{ m: 1, width: '100%' }} disabled={atStationList.length==0}>
+                <Autocomplete
+                  id="scanRevArticle"
+                  disabled={atStationList.length==0}
+                  options={atStationList}
+                  autoComplete
+                  includeInputInList
+                  value={this.state.tMatchingStation}
+                  noOptionsText="Keine Treffer"
+                  onChange={this.handleMACChange}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Scanne das MAC Label der Teststation" fullWidth onKeyDown={this.handleEnterMAC}/>
+                  )}
+                  getOptionLabel={(option) => {
+                    if( (typeof option === 'object') && (typeof option.data === 'object') && ('mac' in option.data) ) {
+                      return option.data.mac;
+                    } else {
+                      return '';
+                    }
+                  }}
+                  getOptionDisabled={(option) => {
+                    let fDisabled = true;
+                    if( (typeof option === 'object') && (option.state === STATION_STATE_Ok) ) {
+                      // The item is disabled if it does not have a MAC.
+                      const fHasMac = ('mac' in option.data );
+                      fDisabled = !fHasMac;
+                    }
+                    return fDisabled;
+                  }}
+                  filterOptions={this.filterStations}
+                />
+              </FormControl>
+
+              <IconButton
+                color="primary"
+                onClick={() => { this.onStationSelect(this.state.tMatchingStation.ulid); }}
+                disabled={this.state.tMatchingStation===null}
+              >
+                <PlayArrowIcon/>
+              </IconButton>
+
+              <IconButton aria-label="help" onClick={this.onHelp}>
+                <HelpOutlineIcon />
+              </IconButton>
+            </Box>
+
           <div id="Root">
             <div id="StationTable">
               <div id="StationHeading">
@@ -456,11 +574,6 @@ class TeststationList extends React.Component {
                 <Typography variant="h3">Timeline</Typography>
               </div>
               {atList}
-            </div>
-            <div id="Help">
-              <IconButton aria-label="help" onClick={this.onHelp}>
-                <HelpOutlineIcon />
-              </IconButton>
             </div>
 
             <Dialog
