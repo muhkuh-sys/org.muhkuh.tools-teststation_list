@@ -98,10 +98,10 @@ class TeststationList extends React.Component {
 
   // This is just a demo to add events.
   componentDidMount() {
-    var opt = {
-      subscriber: 'websocket'
+    var opt = {
+      subscriber: 'websocket'
     }
-    var sub = new NchanSubscriber('/sub', opt);
+    var sub = new NchanSubscriber('/sub', opt);
     sub.on('error', this.onEventError);
     sub.on('message', this.onEventMessage);
     sub.start();
