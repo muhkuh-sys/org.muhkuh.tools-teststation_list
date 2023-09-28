@@ -2,6 +2,7 @@
   display: flex;
   max-height: 100vh;
   min-height: 100vh;
+  position: relative;
 }
 
 #StationTable {
@@ -18,18 +19,12 @@
 }
 
 #StationHeading {
-  position: fixed;
+  position: absolute;
   top: 0;
 }
 
 #StationItem {
   margin: 0.5em;
-}
-
-#Help {
-  position: fixed;
-  top: 0;
-  right: 1em;
 }
 
 .StationIP {
