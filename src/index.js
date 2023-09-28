@@ -433,6 +433,11 @@ class TeststationList extends React.Component {
                 ))}
               </TreeView>
             </div>
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ mx: 2 }}
+            />
             <div id='StationList'>
               <div id="StationHeading">
                 <Typography variant="h3">Timeline</Typography>
