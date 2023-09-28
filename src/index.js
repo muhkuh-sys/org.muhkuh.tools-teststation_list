@@ -96,7 +96,7 @@ class TeststationList extends React.Component {
     }
 
     // Assume an interval of 5 minutes for stations which do not report a value.
-    this.uiDefaultIntervalMs = 1000 * 60 * 5;
+    this.uiDefaultIntervalS = 60 * 5;
 
     // Mark entries as "timed out" after the interval elapsed n times without a notification.
     // The value 4 results in 8 seconds for the new default interval of 2 seconds.
@@ -194,7 +194,7 @@ class TeststationList extends React.Component {
         tJson.path = "";
       }
       if( !("interval" in tJson) ) {
-        tJson.interval = this.uiDefaultIntervalMs;
+        tJson.interval = this.uiDefaultIntervalS;
       }
 
       // Create a new item.
