@@ -1,44 +1,50 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
 
 import "./index.css";
 import 'typeface-roboto';
 import 'typeface-roboto-mono';
 
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
-import MuiAlert from '@material-ui/lab/Alert';
-import Snackbar from '@material-ui/core/Snackbar';
-import TreeItem from '@material-ui/lab/TreeItem';
-import TreeView from '@material-ui/lab/TreeView';
-import Typography from '@material-ui/core/Typography';
-import { ThemeProvider } from '@material-ui/core/styles';
+import { createRoot } from 'react-dom/client';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+import Autocomplete from '@mui/material/Autocomplete';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import CssBaseline from '@mui/material/CssBaseline';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
+import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import MuiAlert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import TextField from '@mui/material/TextField';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import Typography from '@mui/material/Typography';
 import { ulid } from 'ulid';
 
 const humanizeDuration = require('humanize-duration');
-let NchanSubscriber = require("nchan");
+let NchanSubscriber = require("nchan");
 
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import NotInterestedIcon from '@material-ui/icons/NotInterested';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import DoNotDisturbOnTotalSilenceIcon from '@mui/icons-material/DoNotDisturbOnTotalSilence';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import NotInterestedIcon from '@mui/icons-material/NotInterested';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import ImgCow from './images/muhkuh.svg';
-
-import TesterUITheme from './testerui_theme';
 
 
 const STATION_STATE_Ok = 0;
@@ -404,7 +410,7 @@ class TeststationList extends React.Component {
     }, this);
 
     return (
-      <ThemeProvider theme={TesterUITheme}>
+      <ThemeProvider theme={this.tTheme}>
         <CssBaseline>
           <div id="Root">
             <div id="StationTable">
@@ -415,11 +421,13 @@ class TeststationList extends React.Component {
               <TreeView
                 defaultCollapseIcon={<ExpandMoreIcon />}
                 defaultExpandIcon={<ChevronRightIcon />}
+                multiSelect={false}
+                onNodeSelect={(tEvent, strNodeId) => this.onStationSelect(strNodeId)}
               >
                 {this.state.atStationTable.map((tItem, uiIndex) => (
                   <TreeItem key={tItem.ulid} nodeId={tItem.ulid} label={tItem.label}>
                     {tItem.items.map((tItemSub, uiIndexSub) => (
-                      <TreeItem key={tItemSub.ulid} nodeId={tItemSub.ulid} label={tItemSub.label} onLabelClick={() => this.onStationSelect(tItemSub.ulid)}/>
+                      <TreeItem key={tItemSub.ulid} nodeId={tItemSub.ulid} label={tItemSub.label}/>
                     ))}
                   </TreeItem>
                 ))}
@@ -512,4 +520,6 @@ class TeststationList extends React.Component {
   }
 }
 
-ReactDOM.render(<TeststationList />, document.getElementById("index"));
+const container = document.getElementById('index');
+const root = createRoot(container);
+root.render(<TeststationList />);
