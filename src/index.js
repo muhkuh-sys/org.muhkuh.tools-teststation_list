@@ -48,9 +48,10 @@ import ImgCow from './images/muhkuh.svg';
 
 
 const STATION_STATE_Ok = 0;
-const STATION_STATE_Lost = 1;
-const STATION_STATE_IpConflict = 2;
-const STATION_STATE_Delete = 3;
+const STATION_STATE_Busy = 1;
+const STATION_STATE_Lost = 2;
+const STATION_STATE_IpConflict = 3;
+const STATION_STATE_Delete = 4;
 
 class TeststationList extends React.Component {
   constructor(props) {
@@ -83,6 +84,7 @@ class TeststationList extends React.Component {
 
     this.atAvatars = {
       [STATION_STATE_Ok]: (<Avatar aria-label="teststation" src={ImgCow} />),
+      [STATION_STATE_Busy]: (<Avatar aria-label="teststation"><DoNotDisturbOnTotalSilenceIcon /></Avatar>),
       [STATION_STATE_Lost]: (<Avatar aria-label="teststation"><AccessTimeIcon /></Avatar>),
       [STATION_STATE_IpConflict]: (<Avatar aria-label="teststation"><NotInterestedIcon /></Avatar>)
     }
@@ -170,6 +172,18 @@ class TeststationList extends React.Component {
       if( ("ssdp" in tJson) && !("station" in tJson) ) {
         tJson.station = tJson.ssdp;
       }
+      if( !("mac" in tJson) ) {
+        tJson.mac = null;
+      }
+      if( !("busy" in tJson) ) {
+        tJson.busy = false;
+      }
+      if( !("proto" in tJson) ) {
+        tJson.proto = "http";
+      }
+      if( !("path" in tJson) ) {
+        tJson.path = "";
+      }
 
       // Create a new item.
       let tNewItem = {
@@ -219,7 +233,7 @@ class TeststationList extends React.Component {
     }
 
     // Loop over all items and strike out re-used IPs.
-    // Also mark timeouts.
+    // Also mark timeouts and busy stations.
     let atIPs = [];
     let tNow = new Date();
     const tTimeout = this.tTimeout;
@@ -244,6 +258,12 @@ class TeststationList extends React.Component {
           if( uiOldState != STATION_STATE_Lost ) {
             // Set the state to "lost".
             tStation.state = STATION_STATE_Lost;
+            fChanged = true;
+          }
+        } else if( tStation.data.busy ) {
+          if( uiOldState != STATION_STATE_Busy ) {
+            // Set the state to "busy".
+            tStation.state = STATION_STATE_Busy;
             fChanged = true;
           }
         } else {
@@ -316,19 +336,11 @@ class TeststationList extends React.Component {
 
   onStationSelect(strUlid) {
     // Search the ULID in the list of stations.
-    let tItem = this.state.atStationList.find(item => item.ulid==strUlid);
+    const tItem = this.state.atStationList.find(item => item.ulid==strUlid);
     if( tItem!==undefined ) {
-      // Get defaults for "proto" and "path".
-      let strProto = 'http';
-      let strPath = '';
-      if( 'proto' in tItem.data ) {
-        strProto = tItem.data.proto;
-      }
-      if( 'path' in tItem.data ) {
-        strPath = tItem.data.path;
-      }
+      const tData = tItem.data;
       // Construct the URL from all elements.
-      const strUrl = `${strProto}://${tItem.data.ip}:${tItem.data.port}/${strPath}`;
+      const strUrl = `${tData.proto}://${tData.ip}:${tData.port}/${tData.path}`;
       this.setState({
         fForwardDialogIsOpen: true,
         strForwardUrl: strUrl
@@ -381,10 +393,11 @@ class TeststationList extends React.Component {
       }
 
       let tMAC = null;
-      if( 'mac' in tStation ) {
-        tMAC = (<div class="StationMAC">{tStation.mac}</div>);
+      const strMAC = tStation.data.mac;
+      if( strMAC!==null ) {
+        tMAC = (<div className="StationMAC">{tStation.data.mac}</div>);
       } else {
-        tMAC = (<div class="StationMACMissing">not available</div>);
+        tMAC = (<div className="StationMACMissing">not available</div>);
       }
       atList.push(
         <Card key={tStation.ulid} id="StationItem">
@@ -401,7 +414,7 @@ class TeststationList extends React.Component {
             {tStation.data.test.subtitle}
             </Typography>
             <Typography display="block" variant="subtitle2" color="textSecondary">
-            IP: <div class="StationIP">{tStation.data.ip}</div>, MAC: {tMAC}
+            IP: <div className="StationIP">{tStation.data.ip}</div>, MAC: {tMAC}
             </Typography>
           </CardContent>
           {tAction}
@@ -493,6 +506,10 @@ class TeststationList extends React.Component {
                 {this.atAvatars[STATION_STATE_Ok]}
                 <Typography variant="body1" gutterBottom>
                   The station is available.
+                </Typography>
+                {this.atAvatars[STATION_STATE_Busy]}
+                <Typography variant="body1" gutterBottom>
+                  The station is currently busy.
                 </Typography>
                 {this.atAvatars[STATION_STATE_Lost]}
                 <Typography variant="body1" gutterBottom>
