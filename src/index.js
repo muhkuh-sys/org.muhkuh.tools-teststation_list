@@ -558,6 +558,7 @@ class TeststationList extends React.Component {
             </div>
           </Drawer>
 
+          <div id="Root">
             <Box sx={{
               display: 'flex',
               width: '100vw',
@@ -624,113 +625,114 @@ class TeststationList extends React.Component {
               </IconButton>
             </Box>
 
-          <div id="Root">
-            <div id="StationTable">
-              <div id="StationHeading">
-                <Typography variant="h3">Stations</Typography>
+            <div id="Stations">
+              <div id="StationTable">
+                <div id="StationHeading">
+                  <Typography variant="h3">Stations</Typography>
+                </div>
+
+                <TreeView
+                  defaultCollapseIcon={<ExpandMoreIcon />}
+                  defaultExpandIcon={<ChevronRightIcon />}
+                  multiSelect={false}
+                  onNodeSelect={(tEvent, strNodeId) => this.onStationSelect(strNodeId)}
+                >
+                  {this.state.atStationTable.map((tItem, uiIndex) => (
+                    <TreeItem key={tItem.ulid} nodeId={tItem.ulid} label={tItem.label}>
+                      {tItem.items.map((tItemSub, uiIndexSub) => (
+                        <TreeItem key={tItemSub.ulid} nodeId={tItemSub.ulid} label={tItemSub.label}/>
+                      ))}
+                    </TreeItem>
+                  ))}
+                </TreeView>
               </div>
-
-              <TreeView
-                defaultCollapseIcon={<ExpandMoreIcon />}
-                defaultExpandIcon={<ChevronRightIcon />}
-                multiSelect={false}
-                onNodeSelect={(tEvent, strNodeId) => this.onStationSelect(strNodeId)}
-              >
-                {this.state.atStationTable.map((tItem, uiIndex) => (
-                  <TreeItem key={tItem.ulid} nodeId={tItem.ulid} label={tItem.label}>
-                    {tItem.items.map((tItemSub, uiIndexSub) => (
-                      <TreeItem key={tItemSub.ulid} nodeId={tItemSub.ulid} label={tItemSub.label}/>
-                    ))}
-                  </TreeItem>
-                ))}
-              </TreeView>
-            </div>
-            <Divider
-              orientation="vertical"
-              flexItem
-              sx={{ mx: 2 }}
-            />
-            <div id='StationList'>
-              <div id="StationHeading">
-                <Typography variant="h3">Timeline</Typography>
+              <Divider
+                orientation="vertical"
+                flexItem
+                sx={{ mx: 2 }}
+              />
+              <div id='StationList'>
+                <div id="StationHeading">
+                  <Typography variant="h3">Timeline</Typography>
+                </div>
+                {atList}
               </div>
-              {atList}
             </div>
-
-            <Dialog
-              open={this.state.fForwardDialogIsOpen}
-              onClose={this.onForwardDialogClose}
-              aria-labelledby="forward-dialog-title"
-              aria-describedby="forward-dialog-description"
-            >
-              <DialogTitle id="forward-dialog-title">Go to the teststation</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="forward-dialog-description">
-                  Open the test station at <Link href={this.state.strForwardUrl}>{this.state.strForwardUrl}</Link>.
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={this.onForwardDialogClose} color="primary">
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Dialog>
-
-            <Dialog
-              open={this.state.fHelpDialogIsOpen}
-              onClose={this.onHelpDialogClose}
-              aria-labelledby="help-dialog-title"
-              aria-describedby="help-dialog-description"
-            >
-              <DialogTitle id="help-dialog-title">Help</DialogTitle>
-              <DialogContent id="help-dialog-description">
-                <Typography variant="body1" gutterBottom>
-                  This page shows all available test stations in the network.
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  The "Stations" list is sorted by the test title, which is usually the device number and revision.
-                  It shows only test stations which are available.
-                  Click on an entry to open a dialog with a link to the test station.
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  The "Timeline" presents another view on the test stations which is sorted by the last information received from the station.
-                  The state of a station is shown with one of these icons:
-                </Typography>
-
-                {this.atAvatars[STATION_STATE_Ok]}
-                <Typography variant="body1" gutterBottom>
-                  The station is available.
-                </Typography>
-                {this.atAvatars[STATION_STATE_Busy]}
-                <Typography variant="body1" gutterBottom>
-                  The station is currently busy.
-                </Typography>
-                {this.atAvatars[STATION_STATE_Lost]}
-                <Typography variant="body1" gutterBottom>
-                  The expected notifications from the station were not received for at least {this.uiTimeoutInIntervals} times.
-                  After {this.uiWeedoutInIntervals} it will be removed from the list.
-                </Typography>
-                {this.atAvatars[STATION_STATE_IpConflict]}
-                <Typography variant="body1" gutterBottom>
-                  The IP of the station was re-used by another station.
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  Click on a "Go" button in the timeline to open a dialog with a link to the test station.
-                </Typography>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={this.onHelpDialogClose} color="primary">
-                  Ok
-                </Button>
-              </DialogActions>
-            </Dialog>
-
-            <Snackbar open={this.state.fErrorSnackIsOpen} onClose={this.onErrorSnackClose}>
-              <MuiAlert elevation={6} variant="filled" onClose={this.onErrorSnackClose} severity="error">
-                Failed to connect to the list of available test stations!
-              </MuiAlert>
-            </Snackbar>
           </div>
+
+          <Dialog
+            open={this.state.fForwardDialogIsOpen}
+            onClose={this.onForwardDialogClose}
+            aria-labelledby="forward-dialog-title"
+            aria-describedby="forward-dialog-description"
+          >
+            <DialogTitle id="forward-dialog-title">Go to the teststation</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="forward-dialog-description">
+                Open the test station at <Link href={this.state.strForwardUrl}>{this.state.strForwardUrl}</Link>.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.onForwardDialogClose} color="primary">
+                Cancel
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={this.state.fHelpDialogIsOpen}
+            onClose={this.onHelpDialogClose}
+            aria-labelledby="help-dialog-title"
+            aria-describedby="help-dialog-description"
+          >
+            <DialogTitle id="help-dialog-title">Help</DialogTitle>
+            <DialogContent id="help-dialog-description">
+              <Typography variant="body1" gutterBottom>
+                This page shows all available test stations in the network.
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                The "Stations" list is sorted by the test title, which is usually the device number and revision.
+                It shows only test stations which are available.
+                Click on an entry to open a dialog with a link to the test station.
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                The "Timeline" presents another view on the test stations which is sorted by the last information received from the station.
+                The state of a station is shown with one of these icons:
+              </Typography>
+
+              {this.atAvatars[STATION_STATE_Ok]}
+              <Typography variant="body1" gutterBottom>
+                The station is available.
+              </Typography>
+              {this.atAvatars[STATION_STATE_Busy]}
+              <Typography variant="body1" gutterBottom>
+                The station is currently busy.
+              </Typography>
+              {this.atAvatars[STATION_STATE_Lost]}
+              <Typography variant="body1" gutterBottom>
+                The expected notifications from the station were not received for at least {this.uiTimeoutInIntervals} times.
+                After {this.uiWeedoutInIntervals} it will be removed from the list.
+              </Typography>
+              {this.atAvatars[STATION_STATE_IpConflict]}
+              <Typography variant="body1" gutterBottom>
+                The IP of the station was re-used by another station.
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                Click on a "Go" button in the timeline to open a dialog with a link to the test station.
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.onHelpDialogClose} color="primary">
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Snackbar open={this.state.fErrorSnackIsOpen} onClose={this.onErrorSnackClose}>
+            <MuiAlert elevation={6} variant="filled" onClose={this.onErrorSnackClose} severity="error">
+              Failed to connect to the list of available test stations!
+            </MuiAlert>
+          </Snackbar>
         </CssBaseline>
       </ThemeProvider>
     );
