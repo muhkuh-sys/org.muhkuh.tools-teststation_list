@@ -429,7 +429,7 @@ class TeststationList extends React.Component {
     let strPattern = tState.inputValue;
 
     // Filter all available tests based on the pattern.
-    const atFiltered = atOptions.filter(tStation => (('data' in tStation) && ('mac' in tStation.data) && (tStation.data.mac.startsWith(strPattern))) );
+    const atFiltered = atOptions.filter(tStation => (('data' in tStation) && ('mac' in tStation.data) && (tStation.data.mac!==null) && (tStation.data.mac.startsWith(strPattern))) );
 
     // If there is only 1 result, allow a direct selection with "enter".
     // Do not provide this shortcut if there are more than one results, even if all but one are disabled.
