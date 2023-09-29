@@ -12,7 +12,7 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
+import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -22,11 +22,17 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
+import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
@@ -36,10 +42,12 @@ import { ulid } from 'ulid';
 let NchanSubscriber = require("nchan");
 
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import AddchartIcon from '@mui/icons-material/Addchart';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DoNotDisturbOnTotalSilenceIcon from '@mui/icons-material/DoNotDisturbOnTotalSilence';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import MenuIcon from '@mui/icons-material/Menu';
 import NotInterestedIcon from '@mui/icons-material/NotInterested';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
@@ -83,7 +91,9 @@ class TeststationList extends React.Component {
       strForwardUrl: '',
       fErrorSnackIsOpen: false,
       fHelpDialogIsOpen: false,
-      tMatchingStation: null
+      tMatchingStation: null,
+      fMenuIsOpen: false,
+      fShowExtededInformation: false
     };
 
     this.tTheme = createTheme({
@@ -389,6 +399,29 @@ class TeststationList extends React.Component {
   }
 
 
+  onOpenAppMenu = () => {
+    this.setState({
+      fMenuIsOpen: true
+    });
+  }
+
+
+  onCloseAppMenu = () => {
+    this.setState({
+      fMenuIsOpen: false
+    });
+  }
+
+
+  onToggleShowExtendedInformation = () => {
+    const fShowExtededInformationNew = !this.state.fShowExtededInformation;
+
+    this.setState({
+      fShowExtededInformation: fShowExtededInformationNew
+    });
+  }
+
+
   handleMACChange = (tEvent, tStation) => {
     this.setState({
       tMatchingStation: tStation
@@ -451,48 +484,80 @@ class TeststationList extends React.Component {
     atStationList.forEach(function(tStation, uiIndex) {
       const uiState = tStation.state;
 
-      let tAction = null;
-      if( uiState==STATION_STATE_Ok ) {
-        tAction = (
-          <CardActions>
-            <Button variant="contained" endIcon={<PlayArrowIcon />} onClick={() => this.onStationSelect(tStation.ulid)}>Go </Button>
-          </CardActions>
+      let tDetails = null;
+      if( this.state.fShowExtededInformation ) {
+        let tMAC = null;
+        const strMAC = tStation.data.mac;
+        if( strMAC!==null ) {
+          tMAC = (<div className="StationMAC">{tStation.data.mac}</div>);
+        } else {
+          tMAC = (<div className="StationMACMissing">not available</div>);
+        }
+        tDetails = (
+          <CardContent>
+            <div>{`Last seen: ${tStation.data.timestamp}`}</div>
+            <div>{`IP: ${tStation.data.ip}`}</div>
+            <div>{'MAC: '}{tMAC}</div>
+          </CardContent>
         );
       }
 
-      let tMAC = null;
-      const strMAC = tStation.data.mac;
-      if( strMAC!==null ) {
-        tMAC = (<div className="StationMAC">{tStation.data.mac}</div>);
-      } else {
-        tMAC = (<div className="StationMACMissing">not available</div>);
-      }
-      atList.push(
-        <Card key={tStation.ulid} id="StationItem">
-          <CardHeader
-            avatar={atAvatars[uiState]}
-            title={tStation.data.station.name}
-            subheader={tStation.data.timestamp}
-          />
-          <CardContent>
-            <Typography display="block" variant="subtitle2" color="textSecondary">
-            {tStation.data.test.title}
-            </Typography>
-            <Typography display="block" variant="subtitle2" color="textSecondary">
-            {tStation.data.test.subtitle}
-            </Typography>
-            <Typography display="block" variant="subtitle2" color="textSecondary">
-            IP: <div className="StationIP">{tStation.data.ip}</div>, MAC: {tMAC}
-            </Typography>
-          </CardContent>
-          {tAction}
-        </Card>
+      const tCardHeader = (
+        <CardHeader
+          avatar={atAvatars[uiState]}
+          title={tStation.data.station.name}
+          subheader={`${tStation.data.test.title} • ${tStation.data.test.subtitle}`}
+        />
       );
+
+      let tCard = null;
+      if( uiState==STATION_STATE_Ok ) {
+        tCard = (
+          <Card key={tStation.ulid} id="StationItem">
+            <CardActionArea onClick={() => this.onStationSelect(tStation.ulid)}>
+              {tCardHeader}
+              {tDetails}
+            </CardActionArea>
+          </Card>
+        );
+      } else {
+        tCard = (
+          <Card key={tStation.ulid} id="StationItem">
+            {tCardHeader}
+            {tDetails}
+          </Card>
+        );
+      }
+      atList.push(tCard);
     }, this);
+
+    // Create the application menu.
+    const tAppMenu = (
+      <List>
+        <ListItem>
+          <ListItemIcon><AddchartIcon/></ListItemIcon>
+          <ListItemText id='list-item-show-extended-information' primary='Show extended information'/>
+          <Switch
+            edge="end"
+            onChange={this.onToggleShowExtendedInformation}
+            checked={this.state.fShowExtededInformation}
+            inputProps={{
+              'aria-labelledby': 'list-item-show-extended-information',
+            }}
+          />
+        </ListItem>
+      </List>
+    );
 
     return (
       <ThemeProvider theme={this.tTheme}>
         <CssBaseline>
+          <Drawer anchor="right" id='AppMenu' open={this.state.fMenuIsOpen} onClose={this.onCloseAppMenu}>
+            <div tabIndex={0} role="button" onClick={this.onCloseAppMenu} onKeyDown={this.onCloseAppMenu}>
+              {tAppMenu}
+            </div>
+          </Drawer>
+
             <Box sx={{
               display: 'flex',
               width: '100vw',
@@ -538,11 +603,24 @@ class TeststationList extends React.Component {
                 onClick={() => { this.onStationSelect(this.state.tMatchingStation.ulid); }}
                 disabled={this.state.tMatchingStation===null}
               >
-                <PlayArrowIcon/>
+                <PlayArrowIcon className="paddedButton" />
               </IconButton>
 
-              <IconButton aria-label="help" onClick={this.onHelp}>
-                <HelpOutlineIcon />
+              <IconButton
+                aria-label="help"
+                onClick={this.onHelp}
+              >
+                <HelpOutlineIcon className="paddedButton" />
+              </IconButton>
+
+              <IconButton
+                color="primary"
+                aria-label="Menu"
+                onClick={this.onOpenAppMenu}
+                aria-owns={this.state.fMenuIsOpen ? 'AppMenu' : undefined}
+                aria-haspopup="true"
+              >
+                <MenuIcon className="paddedButton" />
               </IconButton>
             </Box>
 

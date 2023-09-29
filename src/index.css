@@ -41,3 +41,8 @@
   display: inline;
   font-style: italic;
 }
+
+.paddedButton {
+  margin-left: 0.75em;
+  margin-right: 0.75em;
+}
