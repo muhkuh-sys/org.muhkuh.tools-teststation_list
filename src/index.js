@@ -52,26 +52,30 @@ const STATION_STATE_Lost = 2;
 const STATION_STATE_IpConflict = 3;
 const STATION_STATE_Delete = 4;
 
+const USE_DEMO_ENTRIES = true;
+
 class TeststationList extends React.Component {
   constructor(props) {
     super(props);
-/*
-    this.atDemoEntries = [
-      '{"timestamp":"2021-03-01 12:35:40","port":9090,"station":{"uuid":"9f4eac14-f5de-4e85-a66c-d056221983a6","name":"Muhkuh Teststation 1912.102R3 Vorverguss NETFIELD IO-LINK WIRELESS 30"},"ip":"192.168.0.51","test":{"title":"1912.102 R3 Vorverguss","subtitle":"NETFIELD IO-LINK WIRELESS 30"}}',
-      '{"port":9090,"timestamp":"2021-01-28 17:34:46","station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"ip":"192.168.0.80"}',
-      '{"ip":"192.168.0.51","test":{"title":"1912.102 R3 Vorverguss","subtitle":"NETFIELD IO-LINK WIRELESS 30"},"port":9090,"timestamp":"2021-03-03 06:55:20","station":{"name":"Muhkuh Teststation 1912.102R3 Vorverguss NETFIELD IO-LINK WIRELESS 30","uuid":"9f4eac14-f5de-4e85-a66c-d056221983a6"}}',
-      '{"station":{"name":"Muhkuh Teststation 1912.122R3 Vorverguss NETFIELD IO-LINK WIRELESS 30","uuid":"7027d19f-508a-4b5e-8a48-c47ada02233a"},"port":9090,"timestamp":"2021-02-03 15:02:24","test":{"subtitle":"NETFIELD IO-LINK WIRELESS 30","title":"1912.122 R3 Vorverguss"},"ip":"192.168.0.96"}',
-      '{"ip":"192.168.0.96","test":{"title":"1912.122 R3 Vorverguss","subtitle":"NETFIELD IO-LINK WIRELESS 30"},"port":9090,"station":{"uuid":"7027d19f-508a-4b5e-8a48-c47ada02233a","name":"Muhkuh Teststation 1912.122R3 Vorverguss NETFIELD IO-LINK WIRELESS 30"},"timestamp":"2021-03-03 10:11:57"}',
-      '{"timestamp":"2021-01-19 12:43:01","port":9090,"station":{"name":"Muhkuh Teststation 2801.400R3","uuid":"f5808f43-37a3-4043-8b20-18d313a22f8e"},"test":{"subtitle":"AIFX-V2-DP Rev3","title":"2801.400 R3"},"ip":"10.11.5.11"}',
-      '{"station":{"uuid":"f5808f43-37a3-4043-8b20-18d313a22f8e","name":"Muhkuh Teststation 2801.400R3"},"ip":"10.11.5.11","test":{"subtitle":"AIFX-V2-DP Rev3","title":"2801.400 R3"},"timestamp":"2021-03-22 10:37:05","port":9090}',
-      '{"ip":"192.168.0.88","timestamp":"2021-01-28 17:33:27","test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"port":9090}',
-      '{"station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"test":{"title":"9387.001 R6","subtitle":"IOT-GW30 R6"},"timestamp":"2021-03-22 15:36:42","ip":"192.168.0.88","port":9090}',
-      '{"timestamp":"2021-03-23 05:48:53","test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"ip":"192.168.0.88","port":9090,"station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"}}',
-      '{"test":{"title":"9387.001 R6","subtitle":"IOT-GW30 R6"},"timestamp":"2021-03-24 11:23:29","port":9090,"station":{"uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9","name":"Muhkuh Teststation 9387.001R6"},"ip":"192.168.0.88"}',
-      '{"station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"port":9090,"ip":"192.168.0.88","timestamp":"2021-03-25 06:08:29"}',
-      '{"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"timestamp":"2021-03-25 14:08:50","station":{"uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9","name":"Muhkuh Teststation 9387.001R6"},"port":9090,"ip":"192.168.0.88"}'
-    ]
-*/
+
+    if( USE_DEMO_ENTRIES ) {
+      this.atDemoEntries = [
+        '{"timestamp":"2023-09-29 08:35:40","port":9090,"station":{"uuid":"9f4eac14-f5de-4e85-a66c-d056221983a6","name":"Muhkuh Teststation 1912.102R3 Vorverguss NETFIELD IO-LINK WIRELESS 30"},"ip":"192.168.0.51","test":{"title":"1912.102 R3 Vorverguss","subtitle":"NETFIELD IO-LINK WIRELESS 30"}}',
+        '{"timestamp":"2023-09-29 08:34:46","port":9090,"station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"ip":"192.168.0.80"}',
+        '{"timestamp":"2023-09-29 08:25:20","port":9090,"ip":"192.168.0.51","test":{"title":"1912.102 R3 Vorverguss","subtitle":"NETFIELD IO-LINK WIRELESS 30"},"station":{"name":"Muhkuh Teststation 1912.102R3 Vorverguss NETFIELD IO-LINK WIRELESS 30","uuid":"9f4eac14-f5de-4e85-a66c-d056221983a6"}}',
+        '{"timestamp":"2023-09-29 08:02:24","port":9090,"station":{"name":"Muhkuh Teststation 1912.122R3 Vorverguss NETFIELD IO-LINK WIRELESS 30","uuid":"7027d19f-508a-4b5e-8a48-c47ada02233a"},"test":{"subtitle":"NETFIELD IO-LINK WIRELESS 30","title":"1912.122 R3 Vorverguss"},"ip":"192.168.0.96"}',
+        '{"timestamp":"2023-09-29 08:11:57","port":9090,"ip":"192.168.0.96","test":{"title":"1912.122 R3 Vorverguss","subtitle":"NETFIELD IO-LINK WIRELESS 30"},"station":{"uuid":"7027d19f-508a-4b5e-8a48-c47ada02233a","name":"Muhkuh Teststation 1912.122R3 Vorverguss NETFIELD IO-LINK WIRELESS 30"}}',
+        '{"timestamp":"2023-09-29 08:43:01","port":9090,"station":{"name":"Muhkuh Teststation 2801.400R3","uuid":"f5808f43-37a3-4043-8b20-18d313a22f8e"},"test":{"subtitle":"AIFX-V2-DP Rev3","title":"2801.400 R3"},"ip":"10.11.5.11"}',
+        '{"timestamp":"2023-09-29 08:37:05","port":9090,"station":{"uuid":"f5808f43-37a3-4043-8b20-18d313a22f8e","name":"Muhkuh Teststation 2801.400R3"},"ip":"10.11.5.11","test":{"subtitle":"AIFX-V2-DP Rev3","title":"2801.400 R3"}}',
+        '{"timestamp":"2023-09-29 08:33:27","port":9090,"ip":"192.168.0.88","test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"}}',
+        '{"timestamp":"2023-09-29 08:36:42","port":9090,"station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"test":{"title":"9387.001 R6","subtitle":"IOT-GW30 R6"},"ip":"192.168.0.88"}',
+        '{"timestamp":"2023-09-29 08:48:53","port":9090,"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"ip":"192.168.0.88","station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"}}',
+        '{"timestamp":"2023-09-29 08:23:29","port":9090,"test":{"title":"9387.001 R6","subtitle":"IOT-GW30 R6"},"station":{"uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9","name":"Muhkuh Teststation 9387.001R6"},"ip":"192.168.0.88"}',
+        '{"timestamp":"2023-09-29 08:08:29","port":9090,"station":{"name":"Muhkuh Teststation 9387.001R6","uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9"},"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"ip":"192.168.0.88"}',
+        '{"timestamp":"2023-09-29 08:08:50","port":9090,"test":{"subtitle":"IOT-GW30 R6","title":"9387.001 R6"},"station":{"uuid":"f15b8544-a26e-49b9-b7e9-34100817fdf9","name":"Muhkuh Teststation 9387.001R6"},"ip":"192.168.0.88"}'
+      ]
+    }
+
     this.state = {
       atStationList: [],
       atStationTable: [],
@@ -115,18 +119,16 @@ class TeststationList extends React.Component {
 
   // This is just a demo to add events.
   componentDidMount() {
-    var opt = {
-      subscriber: 'websocket'
+    if( !USE_DEMO_ENTRIES ) {
+      var opt = {
+        subscriber: 'websocket'
+      }
+      var sub = new NchanSubscriber('/sub', opt);
+      sub.on('error', this.onEventError);
+      sub.on('message', this.onEventMessage);
+      sub.start();
+      this.tSub = sub;
     }
-    var sub = new NchanSubscriber('/sub', opt);
-    sub.on('error', this.onEventError);
-    sub.on('message', this.onEventMessage);
-    sub.start();
-    this.tSub = sub;
-
-//    var tSource = new EventSource('/teststations/sub');
-//    tSource.onerror = this.onEventError;
-//    tSource.onmessage = this.onEventMessage;
 
     // Start a new timer which triggers every second.
     this.tMaintenanceTimer = setInterval(() => this.onMaintenanceTick(), 1000);
@@ -143,16 +145,14 @@ class TeststationList extends React.Component {
   }
 
   onMaintenanceTick() {
-/*
-    // Is something left in the demo contents array?
-    let strEntry = this.atDemoEntries.shift()
-    if( strEntry === undefined ) {
-      // Nothing left, stop the interval.
-      clearInterval(this.interval_demo);
-    } else {
-      this.onEventMessage({data:strEntry});
+    if( USE_DEMO_ENTRIES ) {
+      // Is something left in the demo contents array?
+      let strEntry = this.atDemoEntries.shift()
+      if( strEntry !== undefined ) {
+        this.onEventMessage(strEntry);
+      }
     }
-*/
+
     this.updateList(null);
   }
 
